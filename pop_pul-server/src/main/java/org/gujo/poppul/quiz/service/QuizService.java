@@ -2,6 +2,7 @@ package org.gujo.poppul.quiz.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.gujo.poppul.answer.entity.Answer;
 import org.gujo.poppul.question.dto.QuestionDto;
 import org.gujo.poppul.question.entity.Question;
 import org.gujo.poppul.question.exception.QuestionNotFoundException;
@@ -84,12 +85,28 @@ public class QuizService {
 
     // ✅ 문제 수정
     @Transactional
-    public Question updateQuestion(Long questionId, QuestionDto updatedQuestion) {
-        return questionRepository.findById(questionId).map(question -> {
-            question.setTitle(updatedQuestion.getTitle());
-            question.setImage(updatedQuestion.getImage());
-            return questionRepository.save(question);
-        }).orElseThrow(() -> new RuntimeException("문제를 찾을 수 없습니다."));
+    public Question updateQuestion(Long quizId, Long questionId, QuestionDto questionDto) {
+        Question question = questionRepository.findById(questionId)
+                .orElseThrow(() -> new QuestionNotFoundException("Question not found"));
+
+        if (!question.getQuiz().getId().equals(quizId)) {
+            throw new IllegalArgumentException("Question does not belong to the specified quiz");
+        }
+
+        question.setTitle(questionDto.getTitle());
+        question.setImage(questionDto.getImage());
+
+        // 기존 답변 삭제
+        question.getAnswerList().clear();
+
+        // 새로운 답변 추가
+        questionDto.getAnswerList().forEach(answerDto -> {
+            Answer answer = answerDto.toEntity();
+            answer.setQuestion(question);
+            question.getAnswerList().add(answer);
+        });
+
+        return questionRepository.save(question);
     }
 
     // ✅ 문제 삭제
@@ -124,5 +141,11 @@ public class QuizService {
         Quiz quiz = quizRepository.findById(quizId)
                 .orElseThrow(() -> new QuizNotFoundException("퀴즈를 찾을 수 없습니다."));
         return questionRepository.findByQuizId(quizId);
+    }
+
+    // 특정한 퀴즈의 특정 문제 조회
+    public Question getQuestion(Long quizId, Long questionId) {
+        return questionRepository.findByQuizIdAndId(quizId, questionId)
+                .orElseThrow(() -> new QuestionNotFoundException("문제를 찾을 수 없습니다."));
     }
 }
