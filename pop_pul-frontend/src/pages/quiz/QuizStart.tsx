@@ -156,14 +156,14 @@ const QuizStart: React.FC = () => {
                 )}
               </div>
             </div>
-
+{/* 
             {userRank && (
               <div className="user-rank">
                 <h3>Your Result</h3>
                 <p>Rank: {userRank.rank}</p>
                 <p>Username: {userRank.username}</p>
               </div>
-            )}
+            )} */}
 
             <button onClick={handleEndQuiz} className="end-button">
               End Quiz

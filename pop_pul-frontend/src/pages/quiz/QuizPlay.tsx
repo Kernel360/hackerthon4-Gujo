@@ -1,4 +1,3 @@
-// src/pages/QuizPlay.tsx
 import React, { useEffect, useState } from 'react';
 import './QuizPlay.css';
 
