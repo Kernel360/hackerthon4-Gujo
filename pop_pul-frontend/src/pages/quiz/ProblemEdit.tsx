@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Problem, CreateProblemDto } from "../../types/problem";
 import { problemService } from "../../services/problemService";
+import { CreateProblemDto } from "../../types/problem";
 
 const ProblemEdit: React.FC = () => {
   const { id, questionId } = useParams();

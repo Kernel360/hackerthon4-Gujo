@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { CreateProblemDto } from "../../types/problem";
 import { problemService } from "../../services/problemService";
+import { CreateProblemDto } from "../../types/problem";
 
 const ProblemCreate: React.FC = () => {
   const { id: quizId } = useParams<{ id: string }>();
@@ -10,10 +10,10 @@ const ProblemCreate: React.FC = () => {
     title: "",
     image: "",
     answerList: [
-      { content: "", isCorrect: false },
-      { content: "", isCorrect: false },
-      { content: "", isCorrect: false },
-      { content: "", isCorrect: false },
+      { content: "", is_answer: false },
+      { content: "", is_answer: false },
+      { content: "", is_answer: false },
+      { content: "", is_answer: false },
     ],
   });
   const [error, setError] = useState<string | null>(null);
@@ -41,7 +41,7 @@ const ProblemCreate: React.FC = () => {
   const handleCorrectAnswerChange = (index: number) => {
     const newAnswers = formData.answerList.map((answer, i) => ({
       ...answer,
-      isCorrect: i === index,
+      is_answer: i === index,
     }));
     setFormData((prev) => ({
       ...prev,
@@ -130,7 +130,7 @@ const ProblemCreate: React.FC = () => {
                 <input
                   type="radio"
                   name="correctAnswer"
-                  checked={answer.isCorrect}
+                  checked={answer.is_answer}
                   onChange={() => handleCorrectAnswerChange(index)}
                   className="h-4 w-4 text-blue-600 focus:ring-blue-500"
                 />

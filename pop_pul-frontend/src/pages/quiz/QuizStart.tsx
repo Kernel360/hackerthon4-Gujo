@@ -112,6 +112,9 @@ const QuizStart: React.FC = () => {
       <div className="quiz-content">
         <h1 className="quiz-title">Quiz Room</h1>
 
+          <div className="quizid-display">
+            <h2>Quiz ID: {id}</h2>
+          </div>
         {pin && (
           <div className="pin-display">
             <h2>Room PIN: {pin}</h2>
@@ -123,8 +126,6 @@ const QuizStart: React.FC = () => {
             <button onClick={handleStartQuiz} className="start-button">
               Start Quiz
             </button>
-
-
           
               <div className="question-container">
                 <h3 className="question-text">{questionText}</h3>
@@ -155,14 +156,14 @@ const QuizStart: React.FC = () => {
                 )}
               </div>
             </div>
-
+{/* 
             {userRank && (
               <div className="user-rank">
                 <h3>Your Result</h3>
                 <p>Rank: {userRank.rank}</p>
                 <p>Username: {userRank.username}</p>
               </div>
-            )}
+            )} */}
 
             <button onClick={handleEndQuiz} className="end-button">
               End Quiz

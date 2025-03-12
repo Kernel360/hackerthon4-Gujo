@@ -1,6 +1,6 @@
 // src/routes.tsx
 import { Route, Routes } from "react-router-dom";
-import MainLayout from "./layouts/MainLayout"; // layouts 대신 components로 이동
+import MainLayout from "./layouts/MainLayout"; // lay
 import Home from "./pages/Home";
 import ProblemCreate from "./pages/quiz/ProblemCreate";
 import ProblemEdit from "./pages/quiz/ProblemEdit";
@@ -9,8 +9,8 @@ import QuizCreate from "./pages/quiz/QuizCreate";
 import QuizDetail from "./pages/quiz/QuizDetail";
 import QuizEdit from "./pages/quiz/QuizEdit";
 import QuizList from "./pages/quiz/QuizList";
-import QuizPlay from "./pages/QuizPlay";
-import QuizStart from "./pages/QuizStart";
+import QuizPlay from "./pages/quiz/QuizPlay";
+import QuizStart from "./pages/quiz/QuizStart";
 // import QuizPlay from './pages/QuizPlay';
 // import QuizResult from './pages/QuizResult';
 
