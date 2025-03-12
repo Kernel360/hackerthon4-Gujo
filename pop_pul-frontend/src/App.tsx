@@ -4,10 +4,9 @@ import { AuthProvider } from "./hooks/useUser";
 import AppRoutes from "./routes";
 
 function App() {
-
   return (
     <AuthProvider>
-        <AppRoutes />
+      <AppRoutes />
     </AuthProvider>
   );
 }

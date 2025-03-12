@@ -124,4 +124,99 @@ public class QuizController {
                 .toList();
         return ResponseEntity.ok(questionDtos);
     }
+
+    // ✅ 문제 생성
+    @PostMapping("/{quizId}/questions")
+    public ResponseEntity<QuestionDto> createQuestion(
+            @PathVariable Long quizId,
+            @RequestBody QuestionDto questionDto,
+            HttpServletRequest request) {
+        String userId = (String) request.getSession().getAttribute("userId");
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        // 퀴즈 소유자 확인
+        Quiz quiz = quizService.getQuiz(quizId);
+        if (!quiz.getUser_id().equals(userId)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        try {
+            Question createdQuestion = quizService.createQuestion(quizId, questionDto);
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(QuestionDto.fromEntity(createdQuestion));
+        } catch (Exception e) {
+            log.error("문제 생성 중 오류 발생: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    // ✅ 특정 문제 조회
+    @GetMapping("/{quizId}/questions/{questionId}")
+    public ResponseEntity<QuestionDto> getQuestion(
+            @PathVariable Long quizId,
+            @PathVariable Long questionId,
+            HttpServletRequest request) {
+        String userId = (String) request.getSession().getAttribute("userId");
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        Quiz quiz = quizService.getQuiz(quizId);
+        if (!quiz.getUser_id().equals(userId)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        Question question = quizService.getQuestion(quizId, questionId);
+        return ResponseEntity.ok(QuestionDto.fromEntity(question));
+    }
+
+    // ✅ 문제 수정
+    @PutMapping("/{quizId}/questions/{questionId}")
+    public ResponseEntity<QuestionDto> updateQuestion(
+            @PathVariable Long quizId,
+            @PathVariable Long questionId,
+            @RequestBody QuestionDto questionDto,
+            HttpServletRequest request
+    ) {
+        String userId = (String) request.getSession().getAttribute("userId");
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        Quiz quiz = quizService.getQuiz(quizId);
+        if (!quiz.getUser_id().equals(userId)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        Question updatedQuestion = quizService.updateQuestion(quizId, questionId, questionDto);
+        return ResponseEntity.ok(QuestionDto.fromEntity(updatedQuestion));
+    }
+
+    // ✅ 문제 삭제
+    @DeleteMapping("/{quizId}/questions/{questionId}")
+    public ResponseEntity<Void> deleteQuestion(
+            @PathVariable Long quizId,
+            @PathVariable Long questionId,
+            HttpServletRequest request) {
+        String userId = (String) request.getSession().getAttribute("userId");
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        // 퀴즈 소유자 확인
+        Quiz quiz = quizService.getQuiz(quizId);
+        if (!quiz.getUser_id().equals(userId)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        try {
+            quizService.deleteQuestion(quizId, questionId);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            log.error("문제 삭제 중 오류 발생: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 }

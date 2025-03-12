@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Problem } from "../../types/problem";
-import { Quiz } from "../../types/quiz";
 import { problemService } from "../../services/problemService";
 import { quizService } from "../../services/quizService";
+import { Problem } from "../../types/problem";
+import { Quiz } from "../../types/quiz";
 
 const ProblemList: React.FC = () => {
   const { id: quizId } = useParams<{ id: string }>();
@@ -100,7 +100,7 @@ const ProblemList: React.FC = () => {
                         <div
                           key={answerIndex}
                           className={`p-2 rounded ${
-                            answer.isCorrect
+                            answer.is_answer
                               ? "bg-green-100 border border-green-300"
                               : "bg-gray-50 border border-gray-200"
                           }`}

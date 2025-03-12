@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { CreateQuizDto } from "../../types/quiz";
 import { quizService } from "../../services/quizService";
+import { CreateQuizDto } from "../../types/quiz";
 
 const QuizCreate: React.FC = () => {
   const navigate = useNavigate();

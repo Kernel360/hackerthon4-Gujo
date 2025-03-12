@@ -1,5 +1,6 @@
 package org.gujo.poppul.answer.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,6 +15,7 @@ public class AnswerDto {
     private Long id;
     private int no;
     private String content;
+    @JsonProperty("is_answer")
     private boolean isAnswer;
 
     // Entity -> DTO 변환
@@ -22,7 +24,7 @@ public class AnswerDto {
                 .id(answer.getId())
                 .no(answer.getNo())
                 .content(answer.getContent())
-                .isAnswer(answer.is_answer())
+                .isAnswer(answer.is_answer())  // 더 자연스러운 메서드명
                 .build();
     }
 
@@ -31,7 +33,7 @@ public class AnswerDto {
         return Answer.builder()
                 .no(this.no)
                 .content(this.content)
-                .is_answer(this.isAnswer)
+                .is_answer(this.isAnswer)  // 필드명도 일관성 있게
                 .build();
     }
 }

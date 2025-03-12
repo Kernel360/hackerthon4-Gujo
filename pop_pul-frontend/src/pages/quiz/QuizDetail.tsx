@@ -47,6 +47,23 @@ const QuizDetail: React.FC = () => {
     }
   };
 
+  const handleProblemDelete = async (problemId: number) => {
+    if (!id || !window.confirm("정말로 이 문제를 삭제하시겠습니까?")) return;
+
+    try {
+      setError(null);
+      await problemService.deleteProblem(Number(id), problemId);
+      await loadQuizAndProblems();
+    } catch (error: any) {
+      console.error("Error deleting problem:", error);
+      if (error.response?.status === 404) {
+        setError("문제를 찾을 수 없습니다.");
+      } else {
+        setError("문제 삭제에 실패했습니다.");
+      }
+    }
+  };
+
   if (isLoading)
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -79,7 +96,7 @@ const QuizDetail: React.FC = () => {
               strokeLinecap="round"
               strokeLinejoin="round"
               strokeWidth={2}
-              d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M12 12h.01M12 12h.01M12 12h.01M12 12h.01M12 12h.01M12 12h.01M12 12h.01M12 12h.01M12 12h.01M12 12h.01M12 12h.01"
+              d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M12 12h.01M12 12h.01M12 12h.01M12 12h.01M12 12h.01M12 12h.01M12 12h.01M12 12h.01M12 12h.01"
             />
           </svg>
           <p className="text-xl text-gray-600">퀴즈를 찾을 수 없습니다.</p>
@@ -166,10 +183,10 @@ const QuizDetail: React.FC = () => {
               </div>
 
               {problems.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-12 bg-gray-50 rounded-lg">
+                <div className="flex flex-col items-center justify-center py-16 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-300">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="h-16 w-16 text-gray-400 mb-4"
+                    className="h-20 w-20 text-gray-400 mb-6"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -177,20 +194,23 @@ const QuizDetail: React.FC = () => {
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      strokeWidth={2}
+                      strokeWidth={1.5}
                       d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
                     />
                   </svg>
-                  <p className="text-xl text-gray-600 mb-4">
-                    아직 등록된 문제가 없습니다.
+                  <p className="text-2xl text-gray-600 mb-4 font-medium">
+                    아직 등록된 문제가 없습니다
+                  </p>
+                  <p className="text-gray-500 mb-8">
+                    첫 번째 문제를 추가해보세요!
                   </p>
                   <button
                     onClick={() => navigate(`/quiz/${id}/problems/create`)}
-                    className="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded-lg transition-colors duration-200"
+                    className="inline-flex items-center px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded-xl transition-all duration-200 transform hover:scale-105 hover:shadow-lg"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      className="h-4 w-4 mr-2"
+                      className="h-5 w-5 mr-2"
                       viewBox="0 0 20 20"
                       fill="currentColor"
                     >
@@ -204,63 +224,71 @@ const QuizDetail: React.FC = () => {
                   </button>
                 </div>
               ) : (
-                <div className="space-y-4">
+                <div className="space-y-6">
                   {problems.map((problem, index) => (
                     <div
                       key={problem.id}
-                      className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow duration-200"
+                      className="bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-200 group hover:border-blue-200"
                     >
                       <div className="flex justify-between items-start">
                         <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-4">
-                            <span className="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">
-                              문제 {index + 1}
+                          <div className="flex items-center gap-4 mb-6">
+                            <span className="relative inline-flex">
+                              <span className="bg-blue-500 text-white text-lg font-bold px-5 py-2.5 rounded-2xl shadow-sm">
+                                Q{index + 1}
+                              </span>
+                              <span className="absolute -bottom-1 -right-1 w-3 h-3 bg-blue-300 rounded-full animate-pulse"></span>
                             </span>
-                            <h3 className="text-lg font-semibold text-gray-800">
+                            <h3 className="text-2xl font-bold text-gray-800 group-hover:text-blue-600 transition-colors duration-200 border-b-2 border-transparent group-hover:border-blue-300 pb-1">
                               {problem.title}
                             </h3>
                           </div>
                           {problem.image && (
-                            <img
-                              src={problem.image}
-                              alt="문제 이미지"
-                              className="mt-2 max-w-md rounded-lg shadow-sm"
-                            />
+                            <div className="mt-4 overflow-hidden rounded-xl border border-gray-100 shadow-sm">
+                              <img
+                                src={problem.image}
+                                alt="문제 이미지"
+                                className="w-full object-cover hover:scale-105 transition-transform duration-300"
+                              />
+                            </div>
                           )}
-                          <div className="mt-4 space-y-2">
+                          <div className="mt-6 space-y-3">
                             {problem.answerList.map((answer, answerIndex) => (
                               <div
                                 key={answer.id}
-                                className={`flex items-center p-3 rounded-lg ${
+                                className={`flex items-center p-4 rounded-xl transition-all duration-200 ${
                                   answer.isCorrect
-                                    ? "bg-green-50 border-2 border-green-200"
-                                    : "bg-white border border-gray-200 hover:border-gray-300"
+                                    ? "bg-green-50 border-2 border-green-200 shadow-sm"
+                                    : "bg-white border-2 border-gray-100 group-hover:border-gray-200"
                                 }`}
                               >
-                                <div className="flex items-center flex-1 gap-3">
+                                <div className="flex items-center flex-1 gap-4">
                                   <div
-                                    className={`flex items-center justify-center w-7 h-7 rounded-full text-sm font-medium ${
+                                    className={`relative flex items-center justify-center w-10 h-10 rounded-xl text-base font-bold transition-all duration-200 ${
                                       answer.isCorrect
-                                        ? "bg-green-500 text-white"
-                                        : "bg-gray-100 text-gray-600"
+                                        ? "bg-gradient-to-br from-green-400 to-green-600 text-white shadow-lg shadow-green-200"
+                                        : "bg-gradient-to-br from-gray-100 to-gray-200 text-gray-700 group-hover:from-blue-50 group-hover:to-blue-100"
                                     }`}
                                   >
                                     {answerIndex + 1}
+                                    {answer.isCorrect && (
+                                      <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full animate-pulse"></span>
+                                    )}
                                   </div>
                                   <p
-                                    className={`${
+                                    className={`text-lg ${
                                       answer.isCorrect
-                                        ? "text-green-700 font-medium"
-                                        : "text-gray-700"
+                                        ? "text-green-700 font-semibold"
+                                        : "text-gray-700 group-hover:text-gray-900"
                                     }`}
                                   >
                                     {answer.content}
                                   </p>
                                 </div>
                                 {answer.isCorrect && (
-                                  <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded text-sm font-medium bg-green-100 text-green-800">
+                                  <span className="ml-2 inline-flex items-center px-4 py-1.5 rounded-xl text-sm font-bold bg-gradient-to-r from-green-400 to-green-500 text-white shadow-sm">
                                     <svg
-                                      className="w-4 h-4 mr-1"
+                                      className="w-4 h-4 mr-1.5"
                                       fill="currentColor"
                                       viewBox="0 0 20 20"
                                     >
@@ -277,18 +305,22 @@ const QuizDetail: React.FC = () => {
                             ))}
                           </div>
                         </div>
-                        <div className="flex space-x-2 ml-4">
+                        <div className="flex space-x-2 ml-6">
                           <button
-                            onClick={() =>
+                            onClick={() => {
+                              console.log("Navigating to edit problem:", {
+                                quizId: id,
+                                problemId: problem.id,
+                              });
                               navigate(
                                 `/quiz/${id}/problems/${problem.id}/edit`
-                              )
-                            }
-                            className="inline-flex items-center px-3 py-1.5 bg-yellow-500 hover:bg-yellow-600 text-white text-sm font-medium rounded-lg transition-colors duration-200"
+                              );
+                            }}
+                            className="inline-flex items-center px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white text-sm font-medium rounded-lg transition-all duration-200 hover:shadow-md"
                           >
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
-                              className="h-4 w-4 mr-1"
+                              className="h-4 w-4 mr-1.5"
                               viewBox="0 0 20 20"
                               fill="currentColor"
                             >
@@ -297,32 +329,12 @@ const QuizDetail: React.FC = () => {
                             수정
                           </button>
                           <button
-                            onClick={async () => {
-                              if (
-                                window.confirm(
-                                  "정말로 이 문제를 삭제하시겠습니까?"
-                                )
-                              ) {
-                                try {
-                                  await problemService.deleteProblem(
-                                    Number(id),
-                                    problem.id
-                                  );
-                                  await loadQuizAndProblems();
-                                } catch (error) {
-                                  console.error(
-                                    "Error deleting problem:",
-                                    error
-                                  );
-                                  setError("문제 삭제에 실패했습니다.");
-                                }
-                              }
-                            }}
-                            className="inline-flex items-center px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white text-sm font-medium rounded-lg transition-colors duration-200"
+                            onClick={() => handleProblemDelete(problem.id)}
+                            className="inline-flex items-center px-4 py-2 bg-red-500 hover:bg-red-600 text-white text-sm font-medium rounded-lg transition-all duration-200 hover:shadow-md"
                           >
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
-                              className="h-4 w-4 mr-1"
+                              className="h-4 w-4 mr-1.5"
                               viewBox="0 0 20 20"
                               fill="currentColor"
                             >
