@@ -12,6 +12,7 @@
     import org.gujo.poppul.quiz.entity.Quiz;
     import org.gujo.poppul.quiz.repository.EmitterRepository;
     import org.gujo.poppul.quiz.repository.QuizStreamRepository;
+    import org.gujo.poppul.user.service.UserService;
     import org.springframework.beans.factory.annotation.Autowired;
     import org.springframework.stereotype.Service;
     import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -34,14 +35,19 @@
         private EmitterRepository emitterRepository;
 
         HashMap<Long, Integer> pinList = new HashMap<>();
+        @Autowired
+        private UserService userService;
+
 
         // 이벤트 구독 허용, PIN 전달
         public SseEmitter createQuiz(Long quizId) {
+
+            var admin = userService.getCurrentUserName();
             int pin = (int)(Math.random() * 9000) + 1000;
             log.info("pin: " + pin);
 
             pinList.put(quizId, pin);
-            return subscribe(quizId, "admin", pin);
+            return subscribe(quizId, admin, pin);
         }
 
         // 문제 출제 시작
@@ -64,7 +70,7 @@
             // 퀴즈 전송
             for (Question question : quiz.getQuestionList()) {
                 try {
-                    Map<String, Object> adminData = new HashMap<>();
+                    Map<String,Object> adminData = new HashMap<>();
                     adminData.put("question", question.getTitle());
                     Map<Integer, String> answerMap = new HashMap<>();
                     for (Answer answer : question.getAnswerList()) {
@@ -72,8 +78,11 @@
                     }
                     adminData.put("answers", answerMap);
 
+                    //
+                    var admin=userService.getCurrentUserName();
+
                     Map<String, Object> userData = new HashMap<>();
-                    userData.put("question", question.getTitle());
+                    userData.put("question/id", question.getTitle()+"/"+question.getId());
                     List<Integer> answerNumbers = new ArrayList<>();
                     for (int i = 1; i <= question.getAnswerList().size(); i++) {
                         answerNumbers.add(i);
@@ -82,7 +91,7 @@
 
                     for (SseEmitter sseEmitter : sseEmitters) {
                         String username = emitterRepository.findUsernameByEmitter(sseEmitter);
-                        if ("admin".equals(username)) {
+                        if (admin.equals(username)) {
                             log.info("Sending question to admin: " + question.getTitle());
                             sseEmitter.send(SseEmitter.event().name("question").data(adminData));
                         } else {
@@ -103,10 +112,11 @@
 
             for (SseEmitter sseEmitter : sseEmitters) {
                 String username = emitterRepository.findUsernameByEmitter(sseEmitter);
-                if ("admin".equals(username)) {
+                var admin = userService.getCurrentUserName();
+                if (admin.equals(username)) {
                     try {
                         sseEmitter.send(SseEmitter.event().name("ranking").data(rankData));
-                        log.info("Sent ranking to admin");
+                        log.info("Sent ranking to host");
                     } catch (IOException e) {
                         log.error("Error sending ranking to admin", e);
                         emitterRepository.deleteByName(username);
@@ -157,7 +167,8 @@
                 emitterRepository.deleteByName(username);
             });
 
-            if ("admin".equals(username)) {
+            var admin = userService.getCurrentUserName();
+            if (admin.equals(username)) {
                 broadcast(username, "pin: " + pin);
             } else {
                 broadcast(username, "subscribe complete, username: " + username);

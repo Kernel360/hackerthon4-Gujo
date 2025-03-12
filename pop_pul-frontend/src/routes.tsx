@@ -9,8 +9,8 @@ import QuizCreate from "./pages/quiz/QuizCreate";
 import QuizDetail from "./pages/quiz/QuizDetail";
 import QuizEdit from "./pages/quiz/QuizEdit";
 import QuizList from "./pages/quiz/QuizList";
+import QuizPlay from "./pages/quiz/QuizPlay";
 import QuizStart from "./pages/quiz/QuizStart";
-import QuizPlay from "./pages/QuizPlay";
 // import QuizPlay from './pages/QuizPlay';
 // import QuizResult from './pages/QuizResult';
 
