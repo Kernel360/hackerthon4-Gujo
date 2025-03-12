@@ -93,7 +93,7 @@
 }
 
 .answer-button:hover:not(:disabled) {
-    background-color: #e3e3e3;
+    background-color: #00ffc8;
     border-color: #999;
 }
 

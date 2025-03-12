@@ -119,7 +119,7 @@ const QuizPlay: React.FC = () => {
         const result = await response.text();
         console.log('Answer response:', result);
         setAnswerResult(result);
-        if (result.toLowerCase().includes('correct')) {
+        if (!result.toLowerCase().includes('incorrect')) {
           setScore((prev) => prev + 1);
         }
       } else {
@@ -217,7 +217,7 @@ const QuizPlay: React.FC = () => {
           <h2>Waiting for question...</h2>
           <p>Get ready!</p>
         </div>
-      )}
+      )}  
       <div className="score-container">
         <p>Current Score: {score}</p>
       </div>
