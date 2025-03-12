@@ -8,8 +8,8 @@ import QuizCreate from "./pages/quiz/QuizCreate";
 import QuizDetail from "./pages/quiz/QuizDetail";
 import QuizEdit from "./pages/quiz/QuizEdit";
 import QuizList from "./pages/quiz/QuizList";
+import QuizStart from "./pages/quiz/QuizStart";
 import QuizPlay from "./pages/QuizPlay";
-import QuizStart from "./pages/QuizStart";
 // import QuizPlay from './pages/QuizPlay';
 // import QuizResult from './pages/QuizResult';
 
@@ -42,7 +42,7 @@ const AppRoutes = () => {
             <Route path=":id/edit" element={<QuizEdit />} />
             <Route path=":id/problems" element={<ProblemList />} />
             <Route path=":id/problems/create" element={<ProblemCreate />} />
-            <Route path="start/:pageNumber" element={<QuizStart />} />
+            <Route path=":id/start" element={<QuizStart />} />
             {/* <Route
               path="edit/:id"
               element={
