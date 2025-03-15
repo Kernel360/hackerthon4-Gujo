@@ -1,4 +1,6 @@
+version: '3'
 services:
+  # MySQL 서비스
   pop_pul:
     image: mysql:8.0
     container_name: pop_pul-mysql
@@ -10,6 +12,20 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
 
+  # Spring Boot 애플리케이션
+  spring-boot-app:
+    image: codegod77/pop_pul_backend:latest  # 이전에 푸시한 Spring Boot 이미지를 사용
+    container_name: pop_pul-spring-boot
+    restart: always
+    environment:
+      DATABASE_URL: jdbc:mysql://pop_pul-mysql:3306/pop_pul  # MySQL 컨테이너와 연결
+      DB_USERNAME: root
+      DB_PASSWORD: root
+    ports:
+      - "8080:8080"  # Spring Boot 애플리케이션 포트
+    depends_on:
+      - pop_pul  # MySQL이 먼저 시작되어야 Spring Boot가 시작될 수 있도록 설정
+
 volumes:
-  mysql_data:  # 볼륨을 명시적으로 정의
+  mysql_data:  # MySQL 데이터를 저장할 볼륨
 
